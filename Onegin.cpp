@@ -1,3 +1,4 @@
+#include <cstdint>
 #include "Onegin.h"
 
 long count_symb (String file, char symb) {
@@ -12,13 +13,11 @@ long count_symb (String file, char symb) {
             num_symb++;
     }
 
-    // strchr
     return num_symb;
 }
 
 long count_lines (String file) {
-    return count_symb (file, '\n');
-    // проверка \n на конце буффера
+    count_symb (file, '\n');
 }
 
 long get_file_size (FILE *readfile) {
@@ -64,20 +63,7 @@ String read_from_file (FILE *readfile) {
     return file;
 }
 
-int find_symbol (long file_size, char *buff_file, char symbol, int i) {
-
-    while (i < file_size) {
-        if (buff_file[i] == symbol) {
-            break;
-        }
-        i++;
-    }
-    return i;
-}
-
 String* fill_strings_array (String file, long num_lines, String *strings_array) {
-
-
     long file_size = file.length;
     if (file_size < 0) {
         perror("Error in file size\n");
@@ -97,71 +83,88 @@ String* fill_strings_array (String file, long num_lines, String *strings_array) 
     {
         begin_line = end_line + 1;
 
-        i = find_symbol (file_size, buff_file, '\n', i);
-        // strchr()
+        end_line = (char*) memchr (buff_file + i, 10, file_size - i);
 
-        end_line = buff_file + i;
         *end_line = '\0';
         strings_array[j].str = begin_line;
         strings_array[j].length = end_line - begin_line;
+        i++;
     }
 
     return strings_array;
 }
 
-// int comp (const void* a, const void* b)
-int comp_left_to_right (String s1, String s2) {
-    assert (s1.str != nullptr);
-    assert (s2.str != nullptr);
-
-    // String* s1 = (String *) a;
-
-    return strcmp (s1.str, s2.str);
-
-    // aaa bb
-    // aa abb
-    // aa; abb
-}
-
 int char_cmp (char c1, char c2) {
-    return c1 - c2;
+    return toupper(c1) - toupper(c2);
 }
 
-/* int comp_right_to_left (String s1, String s2) {
-    assert (is_valid_string (s1));
-    assert (is_valid_string (s2));
+int comp_left_to_right (const void *lhs, const void *rhs) {
+    char* lhs_c = ((String *) lhs)->str;
+    char* rhs_c = ((String *) rhs)->str;
+    //assert (is_valid_string (*lhs_s));
+    //assert (is_valid_string (*rhs_s));
 
-    s1.str += s1.length - 1;
-    s2.str += s2.length - 1;
+    // a, ab
+    // a ab
+    // a
+    // aa b
+    // aab
 
-    for (int i = ; i < 0; i++) {
+    // aa b
+    // aab
+    // a ab
+    while ((char_cmp (*(lhs_c), *(rhs_c))) == 0) {
+            if (*(lhs_c) == '\0') {
+                return 1;
+            }
 
+            if (*(rhs_c) == '\0') {
+                return -1;
+            }
+            lhs_c++, rhs_c++;
     }
-    while (char_cmp (*s1.str, *s2.str) == 0) {
+    return char_cmp (*(lhs_c), *(rhs_c));
+}
 
+int comp_right_to_left (const String *lhs, const String *rhs) {
+    int cur_len_lhs = lhs->length - 1;
+    int cur_len_rhs = rhs->length - 1;
+
+    for (; cur_len_lhs >= 0 && cur_len_rhs >= 0; --cur_len_lhs, --cur_len_rhs)
+        if (*(lhs->str + cur_len_lhs) != *(rhs->str + cur_len_rhs))
+            return char_cmp (*(lhs->str + cur_len_lhs), *(rhs->str + cur_len_rhs));
+
+    return cur_len_lhs - cur_len_rhs;
+    // lhs:     Hello!
+    // rhs: Hi, Hello!
+}
+
+/* void Swap (void *lhs, void *rhs, unsigned size) {
+    uint8_t temp = 0;
+    for (int i = 0; i * sizeof(long long) < size; i++) {
+        temp = *((uint8_t *) lhs + i);
+        *((uint8_t *) lhs + i) = *((uint8_t *) rhs + i);
+        *((uint8_t *) rhs + i) = temp;
     }
-
 } */
 
-// универсальный swap (без memcpy);
-void swap_strings (String *strings_array, int i, int j) {
+/* void swap_strings (String *strings_array, int i, int j) {
     String temp = {0};
 
     temp = strings_array[i];
     strings_array[i] = strings_array[j];
     strings_array[j] = temp;
-}
+}*/
 
-// добавить аргумент separator
-void print_to_file (const String *strings_array, int num_lines, FILE *writefile) {
+void print_to_file (const StringBuff strings_array, FILE *writefile) {
+    const char *separator = "--------------------------------Text sorted from left to right:--------------------------------\n\n";
     assert (writefile != nullptr);
 
+    fputs (separator, writefile);
 
-    fprintf (writefile, "--------------------------------Text sorted from left to right:--------------------------------\n\n");
-    for (int i = 0; i < num_lines; i++) {
-        fprintf (writefile, "%s\n", strings_array[i].str);
-        // fputs
-        // fputc
+    for (int i = 0; i < strings_array.num_lines; i++) {
+        fputs (strings_array.string[i].str, writefile);
+        fputc ('\n', writefile);
     }
 }
 
@@ -173,6 +176,11 @@ void dump_strings (String *strings, size_t size) {
     for (size_t i = 0; i < size; ++i) {
         printf ("%zu) %ld -> %s\n", i, strings[i].length, strings[i].str);
     }
+}
+
+void dump_buf_strings (StringBuff string_buff) {
+    printf ("Number strings: %ld\n", string_buff.num_lines);
+    dump_strings(string_buff.string, string_buff.num_lines);
 }
 
 String open_read_close_file (const char *filename) {
@@ -187,30 +195,35 @@ String open_read_close_file (const char *filename) {
     return file;
 }
 
-String* sort_strings (String file_buffer) {
+StringBuff sort_strings (String file_buffer) {
     long num_lines = count_lines (file_buffer);
 
     String *strings_array = (String *) calloc (num_lines, sizeof(String));
     assert (strings_array != nullptr);
 
-    strings_array = fill_strings_array(file_buffer, num_lines, strings_array);
+    strings_array = fill_strings_array (file_buffer, num_lines, strings_array);
     assert (strings_array != nullptr);
 
-    qsort (strings_array, num_lines, sizeof (String), (int (*)(const void *, const void *)) comp_left_to_right);
+    StringBuff string_buff = {
+        .num_lines = num_lines,
+        .string = strings_array
+    };
 
-    return strings_array;
+    qsort (strings_array, num_lines, sizeof (String), (int (*) (const void*, const void*)) comp_right_to_left);
+
+    return string_buff;
 }
 
-void open_write_close_file (const char *file_name, String *strings_array, long num_lines) {
+void open_write_close_file (const char *file_name, StringBuff strings_array) {
     FILE *writefile  = fopen(file_name, "w");
     assert (writefile != nullptr);
 
-    print_to_file (strings_array, num_lines, writefile);
+    print_to_file (strings_array, writefile);
 
     fclose (writefile);
 }
 
-void free_memory (String file_buffer, String *strings_array) {
+void free_memory (String file_buffer, StringBuff strings_array) {
     free (file_buffer.str);
-    free (strings_array);
+    free (strings_array.string);
 }
