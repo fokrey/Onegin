@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <ctype.h>
 #include <stdint.h>
+#include <ctype.h>
 //---------------------------------------------------------
 /** \brief struct String is used to
  * field length is length of te string
@@ -64,7 +65,7 @@ String* fill_strings_array (String file_buffer, long num_lines, String *strings_
  * @param s2 [in] the second string
  * @return difference of strings */
 //---------------------------------------------------------
-int comp_left_to_right (const void *s1, const void *s2);
+int comp_left_to_right (const String *s1, const String *s2);
 
 //---------------------------------------------------------
 /** \brief Function swap_strings swaps two strings in strings_array
@@ -106,7 +107,7 @@ void open_write_close_file (const char *file_name, StringBuff strings_array);
  * @param num_lines number of strings in array
  * @param writefile file we write information to */
 //---------------------------------------------------------
-void print_to_file (const StringBuff strings_array, int num_lines, const char *separator, FILE *writefile);
+void print_to_file (const StringBuff strings_array, FILE *writefile, const char *separator);
 
 //---------------------------------------------------------
 /** \brief Function find_symbol finds symbol in buffer
@@ -136,3 +137,11 @@ void free_memory (String file_buffer, StringBuff strings_array);
  * @param symb
  * @return number of counted symbols */
 long count_symb (String file_buffer, char symb);
+
+bool skip_symb (char symb);
+StringBuff create_strings_array (String file_buffer);
+void sort_left_to_right (StringBuff strings_array);
+void sort_right_to_left (StringBuff strings_array);
+bool is_valid_buff (StringBuff buff);
+void return_initial_text (StringBuff *strings_array);
+void dump_buf_strings (StringBuff string_buff);
