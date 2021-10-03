@@ -9,8 +9,12 @@ bool skip_symb (char elem) {
 }
 
 int comp_left_to_right (const void *lhs, const void *rhs) {
-    char* lhs_c = ((const String *) lhs)->str;
-    char* rhs_c = ((const String *) rhs)->str;
+    const char* lhs_c = ((const String *) lhs)->str;
+    const char* rhs_c = ((const String *) rhs)->str;
+
+    //const char* lhs_c = lhs->str;
+    //const char *rhs_c = rhs->str;
+
     assert (lhs_c != nullptr);
     assert (rhs_c != nullptr);
 
@@ -51,10 +55,31 @@ int comp_right_to_left (const void *lhs, const void *rhs) {
     return cur_len_lhs - cur_len_rhs;
 }
 
+void swap_strings (String *lhs, String *rhs) {
+
+    String temp = *lhs;
+    *lhs = *rhs;
+    *rhs = temp;
+}
+
+void bubble_sort (StringBuff strings_array, int (*compare) (const void *, const void *))
+{
+    long num_lines = strings_array.num_lines;
+    for (int i = 0; i < num_lines - 1; i++) {
+        for (int j = 0; j < num_lines - i - 1; j++) {
+            if (compare (&strings_array.string[j], &strings_array.string[j + 1]) > 0) {
+                swap_strings (&strings_array.string[j], &strings_array.string[j + 1]);
+            }
+        }
+    }
+}
+
 void sort_left_to_right (StringBuff strings_array) {
     qsort (strings_array.string, strings_array.num_lines, sizeof (StringBuff), comp_left_to_right);
+    //bubble_sort (strings_array, comp_left_to_right);
 }
 
 void sort_right_to_left (StringBuff strings_array) {
-    qsort (strings_array.string, strings_array.num_lines, sizeof (StringBuff), comp_right_to_left);
+    //qsort (strings_array.string, strings_array.num_lines, sizeof (StringBuff), comp_right_to_left);
+    bubble_sort (strings_array, comp_right_to_left);
 }

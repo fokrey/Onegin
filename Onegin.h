@@ -159,6 +159,20 @@ void sort_left_to_right (StringBuff strings_array);
 //---------------------------------------------------------
 void sort_right_to_left (StringBuff strings_array);
 
+//---------------------------------------------------------
+/** \brief Function swap_strings swaps two strings
+ * @param [in] lhs the first string
+ * @param [in] rhs the second string */
+//---------------------------------------------------------
+void swap_strings (String *lhs, String *rhs);
+
+//---------------------------------------------------------
+/** \brief Function bubble_sort sorts text using bubble sort
+ * @param [in] strings_array is buffer
+ * @param [in] compare is comparator */
+//---------------------------------------------------------
+void bubble_sort (StringBuff strings_array, int (*compare) (const void *, const void *));
+
 // for debug
 void dump_buf_strings (StringBuff string_buff);
 void dump_strings (String *strings, size_t size);
