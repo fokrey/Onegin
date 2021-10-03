@@ -6,7 +6,7 @@ int main () {
 
     const char *separator_left_to_right = "-------------------------------------Text sorted from left to right-------------------------------------\n\n";
     const char *separator_right_to_left = "\n\n-------------------------------------Text sorted from right to left-------------------------------------\n\n";
-    const char *separator_original_text = "\n\n-------------------------------------Original text-------------------------------------\n\n";
+    const char *separator_original_text = "\n\n-------------------------------------Original text------------------------------------------------------\n\n";
 
     String file_buffer = open_read_close_file (input_file);
     assert (is_valid_string (file_buffer));
