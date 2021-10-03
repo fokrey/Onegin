@@ -5,7 +5,11 @@ String read_from_file (FILE *readfile) {
 
     long file_size = get_file_size(readfile);
 
-    char *buff_file = (char *) calloc(file_size, sizeof(char));
+    char *buff_file = (char *) calloc(file_size + 2, sizeof(char));
+
+    if (buff_file == nullptr) {
+        perror ("buf_file is nullptr");
+    }
 
     if (fread(buff_file, sizeof(char), file_size, readfile) != file_size) {
         printf("Error in reading file\n");
@@ -13,18 +17,8 @@ String read_from_file (FILE *readfile) {
 
     String file = {file_size, buff_file};
 
-    if (file.str == nullptr || file.length < 0) {
-        perror ("Error in struct String file\n");
-
-        return String {
-                .length = -1,
-                .str = nullptr
-        };
-    }
-
     if (buff_file[file_size - 1] != '\n') {
         buff_file[file_size] = '\n';
-        //printf ("%c", buff_file[file_size]);
         return file;
     }
     return file;
@@ -43,19 +37,13 @@ String open_read_close_file (const char *filename) {
 }
 
 long count_symb (String file, char symb) {
-    if (file.str == nullptr) {
-        perror ("Error in counting symbols\n");
-        return -1;
-    }
+    char *begin_line = file.str;
+    char *end_line   = file.str;
 
     long num_symb = 0;
-    for (int i = 0; i < file.length; i++) {
-        if (file.str[i] == symb)
-            num_symb++;
-    }
 
-    if (file.str[file.length - 1] != '\n') {
-        file.str[file.length] = '\n';
+    while ((end_line = strchr (begin_line, symb)) != nullptr) {
+        begin_line = end_line + 1;
         num_symb++;
     }
 
@@ -96,20 +84,17 @@ String* fill_strings_array (String file, long num_lines, String *strings_array) 
         return nullptr;
     }
 
-    char* begin_line = nullptr;
-    char* end_line = buff_file - 1;
+    char* begin_line = buff_file;
+    char* end_line   = buff_file;
 
-    int i = 0;
-    for (int j = 0; j < num_lines; j++)
+    for (int i = 0; i < num_lines; i++)
     {
-        begin_line = end_line + 1;
-
-        end_line = (char*) memchr (buff_file + i, 10, file_size - i);
-
+        end_line = strchr (begin_line, '\n');
         *end_line = '\0';
-        strings_array[j].str = begin_line;
-        strings_array[j].length = end_line - begin_line;
-        i++;
+
+        strings_array[i].str = begin_line;
+        strings_array[i].length = end_line - begin_line;
+        begin_line = end_line + 1;
     }
 
     return strings_array;
@@ -148,6 +133,18 @@ void print_to_file (const StringBuff strings_array, FILE *writefile, const char 
     for (int i = 0; i < strings_array.num_lines; i++) {
         fputs (strings_array.string[i].str, writefile);
         fputc ('\n', writefile);
+    }
+}
+
+void print_initial_text (String file_buffer, FILE *writefile, const char *separator) {
+    fputs (separator, writefile);
+
+    for (int i = 0; i < file_buffer.length; i++) {
+        fputc (file_buffer.str[i], writefile);
+
+        if (file_buffer.str[i] == '\0') {
+            fputc ('\n', writefile);
+        }
     }
 }
 

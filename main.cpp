@@ -14,8 +14,6 @@ int main () {
     StringBuff strings_array = create_strings_array (file_buffer);
     assert (is_valid_buff (strings_array));
 
-    StringBuff copy = make_copy_StringBuff (strings_array);
-
     FILE *writefile  = fopen (output_file, "w");
     assert (writefile != nullptr);
 
@@ -25,7 +23,7 @@ int main () {
     sort_right_to_left (strings_array);
     print_to_file (strings_array, writefile, separator_right_to_left);
 
-    print_to_file (copy, writefile, separator_original_text);
+    print_initial_text (file_buffer, writefile, separator_original_text);
 
     fclose (writefile);
     free_memory (file_buffer, strings_array);

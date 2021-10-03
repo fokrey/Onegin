@@ -44,8 +44,8 @@ String read_from_file (FILE *readfile);
 
 //---------------------------------------------------------
 /** \brief Function count_symb counts number of certain symbol in array
- * @param file_buffer
- * @param symb
+ * @param [in] file_buffer
+ * @param [in] symb
  * @return number of counted symbols */
 //---------------------------------------------------------
 long count_symb (String file_buffer, char symb);
@@ -82,43 +82,51 @@ String* fill_strings_array (String file_buffer, long num_lines, String *strings_
 
 //---------------------------------------------------------
 /** \brief Function make_copy_StringBuff makes a copy of strings_array
- * @param strings_array buffer we copy
+ * @param [in] strings_array buffer we copy
  * @return a copy */
 //---------------------------------------------------------
 StringBuff make_copy_StringBuff (StringBuff strings_array);
 
 //---------------------------------------------------------
 /** \brief Function print_to_file prints array of strings to file
- * @param strings_array the pointer to array of strings
- * @param num_lines number of strings in array
- * @param writefile file we write information to */
+ * @param [in] strings_array the pointer to array of strings
+ * @param [in] num_lines number of strings in array
+ * @param [in] writefile file we write information to */
 //---------------------------------------------------------
 void print_to_file (const StringBuff strings_array, FILE *writefile, const char *separator);
 
 //---------------------------------------------------------
 /** Function is_valid_string checks if string is valid
- * @param string string we want to check
+ * @param [in] string string we want to check
  * @return 0, if string isn't valid, 1, if string is valid */
 //---------------------------------------------------------
 bool is_valid_string (String string);
 
 //---------------------------------------------------------
 /** Function is_valid_buff checks if buffer is valid
- * @param buff buffer we want to check
+ * @param [in] buff buffer we want to check
  * @return 0, if buffer isn't valid, 1, if buffer is valid */
 //---------------------------------------------------------
 bool is_valid_buff (StringBuff buff);
 
 //---------------------------------------------------------
+/** \brief Function print_initial_text prints initial text
+ * @param [in] file_buffer buffer we print
+ * @param [in] writefile file we print to
+ * @param [in] separator a separator */
+//---------------------------------------------------------
+void print_initial_text (String file_buffer, FILE *writefile, const char *separator);
+
+//---------------------------------------------------------
 /** \brief Function free_memory clears memory
- * @param file_buffer
- * @param strings_array */
+ * @param [in] file_buffer
+ * @param [in] strings_array */
 //---------------------------------------------------------
 void free_memory (String file_buffer, StringBuff strings_array);
 
 //---------------------------------------------------------
 /** \brief Function skip_symb skips unnecessary symbols
- * @param elem element we check
+ * @param [in] elem element we check
  * @return 1 if elem is unnecessary symbol, 0 if it's not */
 //---------------------------------------------------------
 bool skip_symb (char elem);
@@ -141,13 +149,13 @@ int comp_right_to_left (const String *lhs, const String *rhs);
 
 //---------------------------------------------------------
 /** \brief Function sort_left_to_right sorts text from left to right
- * @param strings_array array of strings we want to sort */
+ * @param [in] strings_array array of strings we want to sort */
 //---------------------------------------------------------
 void sort_left_to_right (StringBuff strings_array);
 
 //---------------------------------------------------------
 /** \brief Function sort_right_to_left sorts text from right to left
- * @param strings_array array of strings we want to sort */
+ * @param [in] strings_array array of strings we want to sort */
 //---------------------------------------------------------
 void sort_right_to_left (StringBuff strings_array);
 
