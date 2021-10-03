@@ -137,7 +137,7 @@ bool skip_symb (char elem);
  * @param s2 [in] the second string
  * @return difference of strings */
 //---------------------------------------------------------
-int comp_left_to_right (const String *lhs, const String *rhs);
+int comp_left_to_right (const void *lhs, const void *rhs);
 
 //---------------------------------------------------------
 /** \brief Function comp_right_to_left compares two strings from right to left
@@ -145,7 +145,7 @@ int comp_left_to_right (const String *lhs, const String *rhs);
  * @param s2 [in] the second string
  * @return difference of strings */
 //---------------------------------------------------------
-int comp_right_to_left (const String *lhs, const String *rhs);
+int comp_right_to_left (const void *lhs, const void *rhs);
 
 //---------------------------------------------------------
 /** \brief Function sort_left_to_right sorts text from left to right
