@@ -55,7 +55,7 @@ long count_symb (String file_buffer, char symb);
  * @param [in] file is buffer of file where we count number of lines
  * @return number of lines in buffer of file */
 //---------------------------------------------------------
-long   count_lines    (String file);
+long count_lines    (String file);
 
 //---------------------------------------------------------
 /** \brief Function get_file_size calculates the file size in bytes
@@ -181,7 +181,7 @@ void bubble_sort (StringBuff strings_array, int (*compare) (const void *, const 
  * @param comp
  */
 //---------------------------------------------------------
-void my_qsort (String *text, int left, int right, int (*comp) (const void *, const void *))
+void my_qsort (String *text, int left, int right, int (*comp) (const void *, const void *));
 
 // for debug
 void dump_buf_strings (StringBuff string_buff);

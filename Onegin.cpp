@@ -54,7 +54,7 @@ long count_symb (String file, char symb) {
 }
 
 long count_lines (String file) {
-    count_symb (file, '\n');
+    return count_symb (file, '\n');
 }
 
 long get_file_size (FILE *readfile) {

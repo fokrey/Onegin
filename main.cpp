@@ -1,9 +1,19 @@
 #include "Onegin.h"
 
-// аргументы командной строки
-int main () {
-    const char *input_file =  "../data/hamlet_input.txt";
-    const char *output_file = "../data/hamlet_output.txt";
+int main (int argc, const char *argv[]) {
+
+    const char *input_file  = nullptr;
+    const char *output_file = nullptr;
+
+    if (argc == 3) {
+        input_file =  argv[1];
+        output_file = argv[2];
+    }
+
+    if (argc == 1) {
+        input_file = "../data/hamlet_input.txt";
+        output_file = "../data/hamlet_output.txt";
+    }
 
     const char *separator_left_to_right = "-------------------------------------Text sorted from left to right-------------------------------------\n\n";
     const char *separator_right_to_left = "\n\n-------------------------------------Text sorted from right to left-------------------------------------\n\n";
