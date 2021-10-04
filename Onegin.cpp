@@ -1,29 +1,26 @@
 #include "Onegin.h"
 
-Text ctor (const char *filename) {
+void ctor (const char *filename, Text *text) {
     FILE *readfile = fopen(filename, "r");
     assert (readfile != nullptr);
 
-    Text text = {0};
-
-    text.size   = get_file_size (readfile);
-    if (text.size < 0)
+    text->size   = get_file_size (readfile);
+    if (text->size < 0)
         perror ("Error! Size of text is < 0\n");
 
-    text.buffer = read_from_file (readfile, text.size);
-    if (text.buffer == nullptr)
+    text->buffer = read_from_file (readfile, text->size);
+    if (text->buffer == nullptr)
         perror ("Error! text.buffer is nullptr\n");
 
     fclose(readfile);
 
-    text.num_lines = count_lines (text.buffer);
-    if (text.num_lines < 0)
+    text->num_lines = count_lines (text->buffer);
+    if (text->num_lines < 0)
         perror ("Error! Number of lines is < 0\n");
 
-    text.strings = create_strings_array (text.buffer, text.num_lines, text.size);
-    if (text.strings == nullptr)
+    text->strings = create_strings_array (text->buffer, text->num_lines, text->size);
+    if (text->strings == nullptr)
         perror ("Error! text.strings is nullptr\n");
-    return text;
 }
 
 char *read_from_file (FILE *readfile, long file_size) {

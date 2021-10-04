@@ -9,7 +9,7 @@ int main (int argc, const char *argv[]) {
         input_file =  argv[1];
         output_file = argv[2];
     } else {
-        printf ("Not enough arguments fo command line. "
+        printf ("Not enough arguments for command line\n"
                 "Default names are used for input file: %s, output file: %s\n",
                 input_file, output_file);
     }
@@ -18,7 +18,8 @@ int main (int argc, const char *argv[]) {
     const char *separator_right_to_left = "\n\n-------------------------------------Text sorted from right to left-------------------------------------\n\n";
     const char *separator_original_text = "\n\n-------------------------------------Original text------------------------------------------------------\n\n";
 
-    Text text = ctor (input_file);
+    Text text = {};
+    ctor (input_file, &text);
 
     FILE *writefile  = fopen (output_file, "w");
     assert (writefile != nullptr);

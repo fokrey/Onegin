@@ -6,6 +6,7 @@
 #include <ctype.h>
 #include <stdint.h>
 #include <ctype.h>
+
 //---------------------------------------------------------
 /** \brief struct String
  * length is length of te string
@@ -33,9 +34,9 @@ struct Text {
 //---------------------------------------------------------
 /** \brief Function is a constructor of structure Text
  * @param filename name of file
- * @return structure Text */
+ * @param text a pointer to structure Text */
 //---------------------------------------------------------
-Text ctor (const char *filename);
+void ctor (const char *filename, Text *text);
 
 //---------------------------------------------------------
 /** \brief Function read_from_file reads text from file to buffer
