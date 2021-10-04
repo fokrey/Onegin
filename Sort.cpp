@@ -97,6 +97,6 @@ void sort_left_to_right (String *strings_array, long num_lines) {
 
 void sort_right_to_left (String *strings_array, long num_lines) {
     //qsort (strings_array, num_lines, sizeof (String), comp_right_to_left);
-    bubble_sort (strings_array, num_lines, comp_right_to_left);
-    //my_qsort (strings_array, 0, num_lines - 1, comp_right_to_left);
+    //bubble_sort (strings_array, num_lines, comp_right_to_left);
+    my_qsort (strings_array, 0, num_lines - 1, comp_right_to_left);
 }
