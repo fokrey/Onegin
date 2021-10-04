@@ -62,13 +62,12 @@ void swap_strings (String *lhs, String *rhs) {
     *rhs = temp;
 }
 
-void bubble_sort (StringBuff strings_array, int (*compare) (const void *, const void *))
+void bubble_sort (String *strings_array, long num_lines, int (*compare) (const void *, const void *))
 {
-    long num_lines = strings_array.num_lines;
     for (int i = 0; i < num_lines - 1; i++) {
         for (int j = 0; j < num_lines - i - 1; j++) {
-            if (compare (&strings_array.string[j], &strings_array.string[j + 1]) > 0) {
-                swap_strings (&strings_array.string[j], &strings_array.string[j + 1]);
+            if (compare (&strings_array[j], &strings_array[j + 1]) > 0) {
+                swap_strings (&strings_array[j], &strings_array[j + 1]);
             }
         }
     }
@@ -90,14 +89,14 @@ void my_qsort (String * text, int left, int right, int (*comp) (const void *, co
     my_qsort (text, last + 1, right, comp);
 }
 
-void sort_left_to_right (StringBuff strings_array) {
-    //qsort (strings_array.string, strings_array.num_lines, sizeof (StringBuff), comp_left_to_right);
+void sort_left_to_right (String *strings_array, long num_lines) {
+    qsort (strings_array, num_lines, sizeof (String), comp_left_to_right);
     //bubble_sort (strings_array, comp_left_to_right);
-    my_qsort (strings_array.string, 0, strings_array.num_lines - 1, comp_left_to_right);
+    //my_qsort (strings_array, 0, num_lines - 1, comp_left_to_right);
 }
 
-void sort_right_to_left (StringBuff strings_array) {
-    //qsort (strings_array.string, strings_array.num_lines, sizeof (StringBuff), comp_right_to_left);
-    //bubble_sort (strings_array, comp_right_to_left);
-    my_qsort (strings_array.string, 0, strings_array.num_lines - 1, comp_right_to_left);
+void sort_right_to_left (String *strings_array, long num_lines) {
+    //qsort (strings_array, num_lines, sizeof (String), comp_right_to_left);
+    bubble_sort (strings_array, num_lines, comp_right_to_left);
+    //my_qsort (strings_array, 0, num_lines - 1, comp_right_to_left);
 }

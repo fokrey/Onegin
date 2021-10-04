@@ -1,9 +1,33 @@
 #include "Onegin.h"
 
-String read_from_file (FILE *readfile) {
+Text ctor (const char *filename) {
+    FILE *readfile = fopen(filename, "r");
     assert (readfile != nullptr);
 
-    long file_size = get_file_size(readfile);
+    Text text = {0};
+
+    text.size   = get_file_size (readfile);
+    if (text.size < 0)
+        perror ("Error! Size of text is < 0\n");
+
+    text.buffer = read_from_file (readfile, text.size);
+    if (text.buffer == nullptr)
+        perror ("Error! text.buffer is nullptr\n");
+
+    fclose(readfile);
+
+    text.num_lines = count_lines (text.buffer);
+    if (text.num_lines < 0)
+        perror ("Error! Number of lines is < 0\n");
+
+    text.strings = create_strings_array (text.buffer, text.num_lines, text.size);
+    if (text.strings == nullptr)
+        perror ("Error! text.strings is nullptr\n");
+    return text;
+}
+
+char *read_from_file (FILE *readfile, long file_size) {
+    assert (readfile != nullptr);
 
     char *buff_file = (char *) calloc(file_size + 2, sizeof(char));
 
@@ -15,33 +39,19 @@ String read_from_file (FILE *readfile) {
         printf("Error in reading file\n");
     }
 
-    String file = {file_size, buff_file};
-
     if (buff_file[file_size - 1] != '\n') {
         buff_file[file_size] = '\n';
         buff_file[file_size + 1] = '\0';
-        return file;
+        return buff_file;
     }
 
     buff_file[file_size] = '\0';
-    return file;
+    return buff_file;
 }
 
-String open_read_close_file (const char *filename) {
-
-    FILE *readfile = fopen(filename, "r");
-    assert (readfile != nullptr);
-
-    String file = read_from_file(readfile);
-    assert (is_valid_string(file));
-
-    fclose(readfile);
-    return file;
-}
-
-long count_symb (String file, char symb) {
-    char *begin_line = file.str;
-    char *end_line   = file.str;
+long count_symb (char *buff_file, char symb) {
+    char *begin_line = buff_file;
+    char *end_line   = buff_file;
 
     long num_symb = 0;
 
@@ -53,8 +63,8 @@ long count_symb (String file, char symb) {
     return num_symb;
 }
 
-long count_lines (String file) {
-    return count_symb (file, '\n');
+long count_lines (char *buff_file) {
+    return count_symb (buff_file, '\n');
 }
 
 long get_file_size (FILE *readfile) {
@@ -68,6 +78,7 @@ long get_file_size (FILE *readfile) {
 
     if (file_size < 0) {
         perror ("Error in ftell\n");
+        return -1;
     }
 
     rewind (readfile);
@@ -75,13 +86,13 @@ long get_file_size (FILE *readfile) {
     return file_size;
 }
 
-String* fill_strings_array (String file, long num_lines, String *strings_array) {
-    long file_size = file.length;
+String* fill_strings_array (char *file, long file_size, long num_lines, String *strings_array) {
+
     if (file_size < 0) {
         perror("Error in file size\n");
         return nullptr;
     }
-    char *buff_file = file.str;
+    char *buff_file = file;
     if (buff_file == nullptr) {
         perror("Error in buff_file\n");
         return nullptr;
@@ -103,54 +114,31 @@ String* fill_strings_array (String file, long num_lines, String *strings_array) 
     return strings_array;
 }
 
-StringBuff create_strings_array (String file_buffer) {
-    long num_lines = count_lines (file_buffer);
-
+String *create_strings_array (char* file_buffer, long num_lines, long file_size) {
     String *strings_array = (String *) calloc (num_lines, sizeof(String));
     assert (strings_array != nullptr);
 
-    strings_array = fill_strings_array (file_buffer, num_lines, strings_array);
+    strings_array = fill_strings_array (file_buffer, file_size, num_lines, strings_array);
     assert (strings_array != nullptr);
 
-    StringBuff string_buff = {
-            .num_lines = num_lines,
-            .string = strings_array
-    };
-
-    return string_buff;
+    return strings_array;
 }
 
-StringBuff make_copy_StringBuff (StringBuff strings_array) {
-    StringBuff copy = {0};
-    copy.string = (String *) calloc (strings_array.num_lines, sizeof (String));
-    copy.num_lines = strings_array.num_lines;
-    memcpy (copy.string, strings_array.string, strings_array.num_lines * sizeof (String));
-    return copy;
-}
-
-void print_to_file (const StringBuff strings_array, FILE *writefile, const char *separator) {
+void print_to_file (const String *strings_array, long num_lines, FILE *writefile, const char *separator) {
     assert (writefile != nullptr);
 
     fputs (separator, writefile);
 
-    for (int i = 0; i < strings_array.num_lines; i++) {
-        fputs (strings_array.string[i].str, writefile);
+    for (int i = 0; i < num_lines; i++) {
+        fputs (strings_array[i].str, writefile);
         fputc ('\n', writefile);
     }
 }
 
-void print_initial_text (String file_buffer, FILE *writefile, const char *separator) {
+void print_initial_text (char *file_buffer, FILE *writefile, const char *separator) {
     fputs (separator, writefile);
 
-//    for (int i = 0; i < file_buffer.length; i++) {
-//        fputc (file_buffer.str[i], writefile);
-//
-//        if (file_buffer.str[i] == '\0') {
-//            fputc ('\n', writefile);
-//        }
-//    }
-
-    char* begin = file_buffer.str;
+    char* begin = file_buffer;
 
     for (int i = 0; i < 4165; i++)
     {
@@ -161,26 +149,13 @@ void print_initial_text (String file_buffer, FILE *writefile, const char *separa
     }
 }
 
-void free_memory (String file_buffer, StringBuff strings_array) {
-    free (file_buffer.str);
-    free (strings_array.string);
+void dtor (Text text) {
+    free (text.buffer);
+    free (text.strings);
+
+    text.num_lines = 0;
+    text.size      = 0;
+    text.strings   = nullptr;
+    text.buffer    = nullptr;
 }
 
-bool is_valid_string (String string) {
-    return !(string.str == nullptr || string.length < 0);
-}
-
-bool is_valid_buff (StringBuff buff) {
-    return !(buff.string == nullptr || buff.num_lines < 0);
-}
-
-void dump_strings (String *strings, size_t size) {
-    for (size_t i = 0; i < size; ++i) {
-        printf ("%zu) %ld -> %s\n", i, strings[i].length, strings[i].str);
-    }
-}
-
-void dump_buf_strings (StringBuff string_buff) {
-    printf ("Number strings: %ld\n", string_buff.num_lines);
-    dump_strings(string_buff.string, string_buff.num_lines);
-}
