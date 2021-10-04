@@ -100,3 +100,6 @@ void sort_right_to_left (String *strings_array, long num_lines) {
     //bubble_sort (strings_array, num_lines, comp_right_to_left);
     my_qsort (strings_array, 0, num_lines - 1, comp_right_to_left);
 }
+
+
+
