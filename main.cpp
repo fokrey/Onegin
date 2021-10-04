@@ -1,5 +1,6 @@
 #include "Onegin.h"
 
+// аргументы командной строки
 int main () {
     const char *input_file =  "../data/hamlet_input.txt";
     const char *output_file = "../data/hamlet_output.txt";

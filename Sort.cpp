@@ -74,12 +74,30 @@ void bubble_sort (StringBuff strings_array, int (*compare) (const void *, const 
     }
 }
 
+void my_qsort (String * text, int left, int right, int (*comp) (const void *, const void *)) {
+    int last = 0;
+    if (left >= right)
+        return;
+    swap_strings (&text[left], &text[(left + right) / 2]);
+    last = left;
+    for (int i = left + 1; i <= right; i++) {
+        if ((*comp) (&text[i], &text[left]) < 0) {
+            swap_strings (&text[++last], &text[i]);
+        }
+    }
+    swap_strings (&text[left], &text[last]);
+    my_qsort (text, left, last - 1, comp);
+    my_qsort (text, last + 1, right, comp);
+}
+
 void sort_left_to_right (StringBuff strings_array) {
-    qsort (strings_array.string, strings_array.num_lines, sizeof (StringBuff), comp_left_to_right);
+    //qsort (strings_array.string, strings_array.num_lines, sizeof (StringBuff), comp_left_to_right);
     //bubble_sort (strings_array, comp_left_to_right);
+    my_qsort (strings_array.string, 0, strings_array.num_lines - 1, comp_left_to_right);
 }
 
 void sort_right_to_left (StringBuff strings_array) {
     //qsort (strings_array.string, strings_array.num_lines, sizeof (StringBuff), comp_right_to_left);
-    bubble_sort (strings_array, comp_right_to_left);
+    //bubble_sort (strings_array, comp_right_to_left);
+    my_qsort (strings_array.string, 0, strings_array.num_lines - 1, comp_right_to_left);
 }

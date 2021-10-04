@@ -19,8 +19,11 @@ String read_from_file (FILE *readfile) {
 
     if (buff_file[file_size - 1] != '\n') {
         buff_file[file_size] = '\n';
+        buff_file[file_size + 1] = '\0';
         return file;
     }
+
+    buff_file[file_size] = '\0';
     return file;
 }
 
@@ -139,12 +142,22 @@ void print_to_file (const StringBuff strings_array, FILE *writefile, const char 
 void print_initial_text (String file_buffer, FILE *writefile, const char *separator) {
     fputs (separator, writefile);
 
-    for (int i = 0; i < file_buffer.length; i++) {
-        fputc (file_buffer.str[i], writefile);
+//    for (int i = 0; i < file_buffer.length; i++) {
+//        fputc (file_buffer.str[i], writefile);
+//
+//        if (file_buffer.str[i] == '\0') {
+//            fputc ('\n', writefile);
+//        }
+//    }
 
-        if (file_buffer.str[i] == '\0') {
-            fputc ('\n', writefile);
-        }
+    char* begin = file_buffer.str;
+
+    for (int i = 0; i < 4165; i++)
+    {
+        fputs(begin, writefile);
+        fputc('\n', writefile);
+
+        begin = strchr (begin, '\0') + 1;
     }
 }
 

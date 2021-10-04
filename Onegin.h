@@ -173,6 +173,16 @@ void swap_strings (String *lhs, String *rhs);
 //---------------------------------------------------------
 void bubble_sort (StringBuff strings_array, int (*compare) (const void *, const void *));
 
+//---------------------------------------------------------
+/** \brief
+ * @param text
+ * @param left
+ * @param right
+ * @param comp
+ */
+//---------------------------------------------------------
+void my_qsort (String *text, int left, int right, int (*comp) (const void *, const void *))
+
 // for debug
 void dump_buf_strings (StringBuff string_buff);
 void dump_strings (String *strings, size_t size);
